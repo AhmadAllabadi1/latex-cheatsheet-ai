@@ -1,0 +1,416 @@
+\documentclass[10pt]{article}
+\usepackage[margin=1cm]{geometry}
+\usepackage{multicol}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{amsmath}
+
+\begin{document}
+
+\begin{multicols}{2}
+SFRWENG 3S03 Final Notes Review
+Ahmad Allabadi
+April 2025
+Types Of Testing:
+Unit Testing: Testing that smallest parts of the program;
+• Unit testing helps find low-level faults very precisely.
+• Easily conducted by the programmer currently writing the code.
+• Definition of unit differs from language to language however in Java a
+method at the class level is considered a unit.
+• Unit Tests do not find faults between unit interactions.
+• Unit Tests are a form of functional testing.
+• Typically a form of white-box testing.
+Solitary Unit Tests: (IMPORTANT) Unit tests that tests a single unit in
+isolation, with no real dependencies. Any collaborators are replaced with test
+doubles. Pros and cons:
+• Pros:
+– Fast & Deterministic as it does not experience external dependency
+delays
+– Higher reliability since external systems are mocked.
+– Allows you to determine exactly which unit broke and why
+• Cons:
+– Tests can pass even if real integrations are broken
+– Higher maintenance, any changes have to be reflected on the test
+doubles
+Sociable Unit Tests: (IMPORTANT) Units tests that allow real (non-
+mocked) collaborators. The focus on a testing a unit’s interaction with real
+components. Pros and cons:
+1
+• Pros:
+– Tests actual integration (more realistic)
+– Less mocking overhead as there is no need to maintain mocks for
+every dependency
+– Catches integration issues early
+• Cons:
+– Slower execution
+– Dependent on other components
+– Harder to pinpoint failures
+System Testing: Testing system as a whole;
+• System testing helps find high-level faults regarding design intent.
+• System testing can be a form of functional or non-functional testing.
+• Sometimes hard to locate which unit interactions cause an error with
+system testing.
+• Typically a form of black-box testing.
+Integration Testing: (IMPORTANT) Testing different units, or compo-
+nents of a software together;
+• There are three main approaches to integration testing:
+– Big Bang: Put everything together then test. Although it may seem
+a lot like system testing, it focuses on module integration rather than
+the behavior of the whole system
+– Top-Down: Integrate higher-level modules first and test. Work your
+way down to the lower-level modules whilst continuously testing.
+– Bottom-Up: Integrate lower-level modules first and test.
+Work
+your way up to the higher-level modules whilst continuously testing.
+• Can test module interactions that unit testing cannot.
+• Allow tracking of module interactions in an easier manner than system
+testing.
+Acceptance Testing: Evaluating a software based on user needs and business
+requirements. Generally a validation activity.
+Smoke Testing: (IMPORTANT) Quick, and short tests that check the
+basic functionality of software. Main goal is to ensure that major features work
+as intended before performing deeper testing. Pros & Cons:
+2
+• Pros:
+– Early detection of Major Issues
+– Fast and Lightweight
+• Cons:
+– Only tests high-level functionality, no deep or edge case bugs caught
+– Not a substitute for thorough testing
+– Limited scope
+Regression Testing: (IMPORTANT) Re-using tests to ensure that previ-
+ously developed components of software still perform the same after making a
+small change. Pros & Cons:
+• Pros:
+– Helps detect issues introduced by recent code changes in previously
+working features
+– Ensures key features remain stable after updates
+– Supports continuous development
+– Automatable
+– Reduces risk in refactoring
+• Cons:
+– Time-Consuming
+– Maintenance Overhead
+– Resource Intensive
+Exploratory Testing: Testing without following a predefined testing. Testers
+will generally create test cases on the go whilst discovering software.
+Specification-Based Testing: Testing against software specification.
+Model-Based Testing: Testing against a model of expected behavior of the
+software. Initially, a model is developed. Abstract cases are then derived from
+the model. Concrete cases are then derived from the abstract ones.
+Fuzz Testing: Testing by continuously sending random inputs till software
+crashes or we get an incorrect assertion.
+Partition Testing: Testing by partitioning the input domain and selecting
+input values from those partitions.
+3
+Test Doubles (IMPORTANT):
+• Dummy:
+Objects that fulfill method signatures (parameters) but have
+no actual use.
+• Fake:
+Objects that have working, but simplified implementations.
+• Stubs:
+Objects that return pre-defined values (no logic)
+• Spies:
+Similar to stubs, except they record information on how many
+times they were called.
+• Mock:
+Pre-programmed with expectations which form a specification
+of the calls they are expected to receive. Can throw an exception if they
+recieve a call they do not expect and are checked during verification.
+Validation & Verification (IMPORTANT):
+Verification: The goal of verification is to ensure the software meets the spec-
+ifications and design documents. This happens during development with some
+examples of verification being:
+• Code Reviews
+• Static Analysis
+• Unit Testing
+Validation: The goal of validation is to ensure that the software meets user
+needs and expectations. This happens after implementation with some examples
+being:
+• Functional Testing
+• Acceptance Testing
+• User Testing
+Reviews (IMPORTANT):
+Reviews provided a qualitative evaluation of correctness based on informal tech-
+niques, e.g checklists.
+Peer Review: Evaluation conducted by people with similar competencies and
+expertise to the author of the work. Principles & Challenges:
+• Principles:
+– A larger and more diverse group of people are more likely to find
+weaknesses
+4
+– A way of providing external validation by the community
+• Challenges:
+– Slower than checking your own work
+– Encourages perfectionism and opportunism
+Software Review: An evaluation of software elements to ascertain discrepan-
+cies from planned results and to recommend improvement.
+Types Of Review:
+• Ad-hoc: ”Alice, are you free to help me figure out the cause of this bug
+for 5 minutes?”
+• Peer deskcheck: “Please could you take a look at pull request #243?
+Feedback received by Friday would be greatly appreciated!”
+• Pair Programming
+• Walkthrough: A more formal meeting, conducted by the author. The goal
+is to educate an audience about the software.
+• Team Review: A formal review, such as code review or technical review.
+Systematic examination of a product or code
+• Inspection: Most systematic and rigorous form of review which is carried
+out by inspectors trained to identify common defects using analysis
+Control Flow Graphs: (IMPORTANT)
+A control flow graph is a representation of all the possible paths that can be
+taken through a program based on its control structures such as if-else, loops,
+switches. The key idea behind drawing them is being able to identify branching.
+Take the following code:
+int function(int x){
+int y = 0;
+if (x > 10)
+y = 1;
+else
+y = 2;
+if (x > 5)
+y = y*2;
+if (x > 0)
+y = y*3;
+return y;
+}
+5
+The corresponding CFG:
+Coverage:
+Statement coverage: A test suite that ensures in each statement in the pro-
+gram being executed at least once. (Very weak)
+Branch Coverage: A test suite that ensures that each branch of a conditional
+being taken at least once (Compromise between path and statement). An issue
+with branch coverage is, due to short circuiting boolean operators, we might
+not test all conditions.
+Condition Coverage: A test suite that ensures each condition is executed to
+be true and false at least once.
+Combinatorial Coverage: A test suite achieves combinatorial coverage if it
+ensures in all the conditions in each conditional being tried in all different com-
+binations of truth values (Grows exponentially quickly).
+Modified Condition/Decision Coverage (MC/DC): (IMPORTANT!!!!!)
+6
+• Achieves 100% branch coverage
+• Achieves 100% condition coverage
+• Each entry/exit point executed at least once
+• Each condition affects the behavior independently
+Example of achieving MC/DC coverage on paper, take the conditional:
+(A AND B) XNOR C
+First we draw the truth table:
+Test Case
+A
+B
+C
+A AND B
+(A AND B) XNOR C
+TC1
+T
+T
+T
+T
+T
+TC2
+T
+T
+F
+T
+F
+TC3
+T
+F
+T
+F
+F
+TC4
+T
+F
+F
+F
+T
+TC5
+F
+T
+T
+F
+F
+TC6
+F
+T
+F
+F
+T
+TC7
+F
+F
+T
+F
+F
+TC8
+F
+F
+F
+F
+T
+Table 1: Truth Table for (A AND B) XNOR C
+• We now need to find 2 Test Cases, where B and C remain the same and A
+changes with the outcome of the conditional changing. Let us take TC1
+and TC5, in TC1 we have (T, T, T) and in TC5 we have (F, T, T) and we
+can clearly see the outcome of TC1 is True and outcome of TC5 is False.
+• We now need to find 2 Test Cases, where A and C remain the same and B
+changes with the outcome of the conditional changing. Let us take TC1
+and TC3, in TC1 we have (T, T, T) and in TC3 we have (T, F, T) and we
+can clearly see the outcome of TC1 is True and outcome of TC5 is False.
+• We now need to find 2 Test Cases, where A and B remain the same and C
+changes, with the outcome of the conditional changing. Let us take TC1
+and TC2, in TC1 we have (T, T, T) and in TC2 we have (T, T, F) and we
+can clearly see the outcome of TC1 is True and outcome of TC2 is False.
+Our final test suite should include TC1, TC2, TC3, TC5.
+Contracts (IMPORTANT):
+Contracts, in software development context, refers to three major components:
+• What inputs a function expects (Pre-conditions)
+7
+• What it guarantees to provide (Post-Conidition)
+• What conditions must be true before and after it runs (Invariant)
+One example of contracts is using JML. JML is a specification language used to
+formally specify contracts for Java code using special comments that are checked
+at runtime and compile time. Examples of JML syntax:
+/*@
+requires x >= 0;
+ensures \result * \result <= x;
+ensures (\result + 1) * (\result + 1) > x;
+@*/
+public int sqrtFloor(int x) {
+...
+}
+\result refers to the return value of a method (not a variable called result).
+Another example:
+//@ ensures count == \old(count) + 1;
+public void increment() {
+count++;
+}
+Here \old(count) refers to the value of the attribute count prior to execution.
+An example if invariant:
+public class Temperature {
+private int celsius;
+//@ invariant celsius >= -273;
+}
+When to Use & Avoid (IMPORTANT):
+Situations where we would use contracts:
+• Critical or safety-sensitive systems such as in flight control, nuclear plant
+control etc.
+• Reusable libraries as contracts help consumers understand assumptions
+Where they are not necessary:
+• Rapid prototyping
+• Low-risk code
+• Highly-Dynamic languages
+8
+Assertions (IMPORTANT):
+Assertions are good for enforcing preconditions, postconditions, and invariants
+at runtime. They can be disabled. Checked exceptions (at compile time) are
+still prferred for preconditions.
+Hoare Logic (IMPORTANT):
+Hoare Logic is a formal system used to generate and verify proof obligations
+about program correctness. Consists of a triple {P}C{Q} where P is the pre-
+condition and Q is the post-condition and C is our command (program).
+Weakest Pre-condition:
+Consider some valid Hoare triples:
+• {x = 5 ∧y = 10} z := x
+y {z < 1}
+• {x < y ∧y > 0} z := x
+y {z < 1}
+• {y ̸= 0 ∧x
+y < 1} z := x
+y {z < 1}
+All these are true however the last one is the most useful because it allows us to
+invoke the program in the most general condition. Thus, the last pre-condition
+is our weakest precondition.
+Weakest precondition: Is formally defined as “If {P} S {Q} and for all
+P’ such that {P’} S {Q} and P’ =⇒P then P is the weakest precondition of S
+with reference to Q.” In the example above all the preconditions imply the last
+precondition thus it is our weakest pre-condition.
+Example 1
+We are given {P} x := 3 {x + y > 0} and are tasked with finding the weakest
+pre-condition. We can see that this contains an assignment and thus we could
+follow “The Assignment Rule” which gives us a systematic way of finding the
+weakest pre-condition. The rule is as follows:
+wp(x := E, P) = [E/x]P
+Which translates to “To find the precondition P that guarantees postcondition
+Q after assignment x := E substitute every x in Q with E. Thus we substitute 3
+for x resulting in 3+y > 0 which means y > −3. Thus our weakest precondition
+is y > −3 resulting in our hoare triple {y > −3} x := 3 {x + y > 0}
+9
+Example 2
+We are given {P} x := 3·y+z {x·y−z > 0}. Similarly we substitute x for 3·y+z
+in all occurrences of x in our post condition resulting in (3 · y + z) · y −z > 0.
+If we expand and simplify:
+(3 · y + z) · y −z =
+(1)
+3 · y2 + z · y −z =
+(2)
+3 · y2 + z · (y −1) > 0
+(3)
+We can rearrange this and obtain:
+z > −3 · y2
+y −1
+This gives us our precondition at y ̸= 1 however we would need to present a
+case for y = 1 seperately.
+If we substitute y = 1 we obtain the inequality
+3 + z −z > 0 which is true for all z. Thus our resulting hoare triple looks like
+{y = 1 ∨z > −3·y2
+y−1 } x := 3 · y + z {x · y −z > 0}
+Example 3:
+We are given {P} x := x + 1; y := x + y {y > 5}.
+This is a sequence of
+assignments rather than a single assignment. Thus we perform a sequence of
+assignment rules. First we find wp(y := x + y, y > 5). We substitute x + y at
+all instances of y giving us x + y > 5. We now find wp(x := x + 1, x + y > 5).
+We do a simple substitution giving us x + 1 + y > 5 which means x + y > 4
+which is our final pre-condition. Essentially what we did was we found wp(x :=
+x + 1, wp(y := x + y, y > 5)).
+Example 4:
+We are given {P} if
+x > 0
+then
+y := z
+else
+y := −z {y > 5}. As we
+can see, this follows a conditional. We use a conditional rule here which states
+to find wp(if B then S else T, Q) = B
+=⇒
+wp(S, Q) ∧¬B
+=⇒
+wp(T, Q).
+We follow this rule let us first find the first implication x > 0 =⇒wp(y :=
+z, y > 5) which simplies to x > 0 =⇒z > 5 and now the second implication
+¬x > 0 =⇒wp(y := −z, y > 5) which simplies to x ≤0 =⇒z < −5. Thus
+our resulting weakest pre-condition is x > 0 =⇒z > 5 ∧x ≤0 =⇒z < −5.
+Strongest Post Condition:
+Strong Post-condition:
+Consider some valid Hoare triples:
+• {x = 5} x := x · 2 {true}
+10
+• {x = 5} x := x · 2 {x > 0}
+• {x = 5} x := x · 2 {x = 10 ∨x = 5}
+• {x = 5} x := x · 2 {x = 10}
+Strongest postcondition Is formally defined as “If {P} S {Q} and for all Q’
+such that {P’} S {Q} and Q =⇒Q’ then Q is the strongest postcondition of
+S with reference to P.” As we can see here even though all of them are valid,
+x = 10 is our strongest post-condition as it implies all the other post-conditions.
+RICE’s theorem:
+The theorem states “Any non-trivial semantic property about the language
+recognized by a Turing machine is undecidable.”. Firstly, a semantic property is
+something about what a program does (it’s behavior) not its code. For example:
+• Does it halt on all inputs
+• Does program compute a constant function
+Furthermore, non-trivial properties are those that might be true for some pro-
+grams and false for others. As a consequence of this theorem static analysis is
+necessarily:
+• Incomplete (Complete means no false positives arise)
+• Unsound (Sound means no false negatives arise)
+• Undecidable (Always halts and gives an answer)
+11
+
+\end{multicols}
+
+\end{document}
