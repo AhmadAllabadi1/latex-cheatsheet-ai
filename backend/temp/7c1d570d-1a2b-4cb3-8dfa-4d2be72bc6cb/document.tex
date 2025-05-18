@@ -1,0 +1,100 @@
+\documentclass[10pt,portrait]{article}
+\usepackage[margin=1cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{multicol}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{amsmath}
+
+\begin{document}
+
+\small
+
+\begin{multicols}{ 2 }
+\section*{3S03 Midterm Notes}
+\subsection*{Ahmad Allabadi, February 2025}
+
+\section*{Module 1}
+
+\subsection*{Testing Types}
+\begin{itemize}
+    \item \textbf{Dynamic Testing}: Execute code.
+    \item \textbf{Static Testing}: Review code, requirements, design.
+    \item \textbf{Black-Box Testing}: No implementation knowledge.
+    \item \textbf{Grey-Box Testing}: Some implementation knowledge.
+    \item \textbf{White-Box Testing}: Full implementation knowledge.
+    \item \textbf{Functional Testing}: Check specific functionality.
+    \item \textbf{Non-Functional Testing}: Assess non-functional aspects.
+\end{itemize}
+
+\subsection*{Key Concepts}
+\begin{itemize}
+    \item \textbf{Fault}: Potential error source.
+    \item \textbf{Error}: Incorrect internal state.
+    \item \textbf{Failure}: Incorrect external state.
+\end{itemize}
+
+\subsection*{Testing Levels}
+\begin{itemize}
+    \item \textbf{Unit Testing}: Test smallest program parts.
+    \item \textbf{System Testing}: Test entire system.
+    \item \textbf{Integration Testing}: Test component interactions.
+    \item \textbf{Acceptance Testing}: Validate user needs.
+    \item \textbf{Smoke Testing}: Quick major feature check.
+    \item \textbf{Regression Testing}: Verify unchanged behavior post-modification.
+\end{itemize}
+
+\section*{Module 2}
+
+\subsection*{Testing Strategies}
+\begin{itemize}
+    \item \textbf{Exploratory Testing}: Unscripted, on-the-go tests.
+    \item \textbf{Specification-Based Testing}: Against specifications.
+    \item \textbf{Model-Based Testing}: Against expected behavior model.
+    \item \textbf{Fuzz Testing}: Random inputs.
+    \item \textbf{Test Oracle}: Reference for test validation.
+\end{itemize}
+
+\subsection*{Partition Testing}
+\begin{itemize}
+    \item Partition input domain into equivalence classes.
+    \item Types: Strong/Normal, Strong/Robust, Weak/Normal, Weak/Robust.
+    \item \textbf{Boundary Testing}: Test domain boundaries.
+\end{itemize}
+
+\subsection*{Coverage Testing}
+\begin{itemize}
+    \item \textbf{Statement, Branch, Path Coverage}.
+    \item \textbf{Fault Injection}: Introduce faults, test robustness.
+\end{itemize}
+
+\section*{Module 3}
+
+\subsection*{Coverage Concepts}
+\begin{itemize}
+    \item \textbf{Exhaustive Testing}: All inputs covered.
+    \item \textbf{Combinatorial Coverage}: All condition combinations.
+    \item \textbf{MC/DC}: Minimal important combinations.
+    \item \textbf{Source vs Code Coverage}: Ensure coverage at both levels.
+\end{itemize}
+
+\subsection*{Structural Testing}
+\begin{itemize}
+    \item \textbf{Criteria Subsumption}: Higher criteria cover lower.
+\end{itemize}
+
+\section*{Module 4}
+
+\subsection*{Review and Analysis}
+\begin{itemize}
+    \item Types: Ad-hoc, Peer deskcheck, Pair Programming, Walkthrough, Team Review, Formal Inspection.
+    \item \textbf{Mutation Testing}: Introduce syntax changes, re-test.
+\end{itemize}
+
+\subsection*{Test Doubles}
+\begin{itemize}
+    \item \textbf{Dummy, Fake, Stubs, Spies, Mock}.
+\end{itemize}
+\end{multicols}
+
+\end{document}

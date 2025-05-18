@@ -10,9 +10,18 @@ from fastapi import FastAPI, UploadFile, File, Form
 from utils.latex_gen import render_latex
 from utils.compile_latex import compile_latex_to_pdf
 from utils.ai_engine import generate_cheatsheet
+from fastapi.middleware.cors import CORSMiddleware
 
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # your frontend origin
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def home():
@@ -21,7 +30,7 @@ def home():
 @app.post("/upload")
 async def upload_file(
     file: UploadFile = File(...),
-    font_size: str = Form("\\small"),
+    font_size: str = Form("small"),
     columns: int = Form(2),
     orientation: str = Form("portrait")
 ):
@@ -38,7 +47,8 @@ async def upload_file(
         return JSONResponse(status_code=500, content={"error": "File must be a PDF or TXT file"})
     
     ai_generated_text = generate_cheatsheet(text)
-    latex_content = render_latex(ai_generated_text, font_size, columns, orientation)
+    latex_content = render_latex(ai_generated_text, "\\" + font_size, columns, orientation)
     latex_pdf = compile_latex_to_pdf(latex_content)
     #return {"latex_content": latex_content}
     return FileResponse(path=latex_pdf, media_type="application/pdf", filename="cheatsheet.pdf")
+
