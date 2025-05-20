@@ -1,0 +1,124 @@
+\documentclass[10pt,portrait]{article}
+\usepackage[margin=1cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{multicol}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{amsmath}
+
+\begin{document}
+
+\small
+
+\begin{multicols}{ 3 }
+\section*{3S03 Midterm Notes}
+\textbf{Ahmad Allabadi \hfill February 2025}
+
+\section*{Module 1}
+\subsection*{Testing}
+\begin{itemize}
+    \item \textbf{Dynamic Testing:} Execute code.
+    \item \textbf{Static Testing:} No code execution. Examples:
+    \begin{itemize}
+        \item Code Review
+        \item Requirements Review
+        \item Design Review
+    \end{itemize}
+    \item \textbf{Black-Box Testing:} No implementation knowledge. Examples:
+    \begin{itemize}
+        \item Login page functionality
+        \item Cart checkout functionality
+    \end{itemize}
+    \item \textbf{Grey-Box Testing:} Some implementation knowledge. Examples:
+    \begin{itemize}
+        \item Database queries
+        \item API requests
+    \end{itemize}
+    \item \textbf{White-Box Testing:} Full implementation knowledge.
+\end{itemize}
+
+\subsection*{Functional vs Non-Functional Testing}
+\begin{itemize}
+    \item \textbf{Functional:} Specific function checks. Examples:
+    \begin{itemize}
+        \item Login Page
+        \item Shopping Cart
+    \end{itemize}
+    \item \textbf{Non-Functional:} Beyond functionality. Examples:
+    \begin{itemize}
+        \item Load Testing
+        \item Security Testing
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Fault, Error, Failure}
+\begin{itemize}
+    \item \textbf{Fault:} Leads to an error.
+    \item \textbf{Error:} Incorrect internal state.
+    \item \textbf{Failure:} Incorrect external state.
+\end{itemize}
+
+\subsection*{Testing Types}
+\begin{itemize}
+    \item \textbf{Unit Testing:} Smallest parts, typically white-box.
+    \item \textbf{System Testing:} Whole system, often black-box.
+    \item \textbf{Integration Testing:} Testing combined components.
+    \item \textbf{Acceptance Testing:} Based on user needs.
+    \item \textbf{Smoke Testing:} Basic functionality check.
+    \item \textbf{Regression Testing:} Ensure unchanged functionality.
+\end{itemize}
+
+\section*{Module 2}
+\subsection*{Testing Techniques}
+\begin{itemize}
+    \item \textbf{Exploratory Testing:} No predefined tests.
+    \item \textbf{Specification-Based Testing:} Against specifications.
+    \item \textbf{Model-Based Testing:} Against expected behavior model.
+    \item \textbf{Fuzz Testing:} Random inputs.
+    \item \textbf{Partition Testing:} Input domain partitioning.
+    \item \textbf{Boundary Testing:} Values on domain boundaries.
+\end{itemize}
+
+\subsection*{Coverage-Based Testing}
+\begin{itemize}
+    \item \textbf{Statement Coverage:} Execute every statement.
+    \item \textbf{Branch Coverage:} Ensure each path.
+    \item \textbf{Condition Coverage:} Each condition true/false.
+    \item \textbf{Path Coverage:} All independent paths.
+\end{itemize}
+
+\section*{Module 3}
+\subsection*{Software Metrics}
+\begin{itemize}
+    \item \textbf{Exhaustive Testing:} All possible inputs.
+    \item \textbf{Coverage:} Proportion of domain tested.
+    \item \textbf{MC/DC:} Important combinations only.
+\end{itemize}
+
+\subsection*{Structural Testing}
+\begin{itemize}
+    \item \textbf{Source vs Code:} Differences in coverage.
+    \item \textbf{Criteria Subsumption:} One criterion implies another.
+\end{itemize}
+
+\section*{Module 4}
+\subsection*{Reviews and Analysis}
+\begin{itemize}
+    \item \textbf{Types of Review:}
+    \begin{itemize}
+        \item Ad-hoc
+        \item Peer deskcheck
+        \item Pair Programming
+        \item Walkthrough
+        \item Team Review
+        \item Formal Inspection
+    \end{itemize}
+\end{itemize}
+
+\subsection*{Mutation Testing}
+\begin{itemize}
+    \item Assume correctness, make changes, check behavior.
+\end{itemize}
+\end{multicols}
+
+\end{document}
