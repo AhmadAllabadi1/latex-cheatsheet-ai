@@ -1,28 +1,53 @@
 import { useState } from 'react';
 
 function App() {
-  const [file, setFile] = useState(null);
+  const [files, setFiles] = useState([]);
   const [fontSize, setFontSize] = useState('normal');
   const [columns, setColumns] = useState('1');
   const [orientation, setOrientation] = useState('portrait');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [downloadUrl, setDownloadUrl] = useState(null);
+  const [downloadUrls, setDownloadUrls] = useState([]);
+
+  const handleFileChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    // Filter for PDF files only
+    const pdfFiles = selectedFiles.filter(file => file.type === 'application/pdf');
+    
+    // Add new files to existing ones
+    setFiles(prevFiles => [...prevFiles, ...pdfFiles]);
+    
+    if (pdfFiles.length !== selectedFiles.length) {
+      setError('Some files were skipped. Only PDF files are allowed.');
+    } else {
+      setError(null);
+    }
+  };
+
+  const removeFile = (indexToRemove) => {
+    setFiles(prevFiles => prevFiles.filter((_, index) => index !== indexToRemove));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!file) {
-      setError('Please select a PDF file');
+    if (files.length === 0) {
+      setError('Please select at least one PDF file');
       return;
     }
 
     setLoading(true);
     setError(null);
-    setDownloadUrl(null);
+    setDownloadUrls([]);
 
     const formData = new FormData();
-    formData.append('file', file);
-    formData.append('fontSize', fontSize);
+    
+    // Append each file with the same field name 'files'
+    files.forEach((file) => {
+      formData.append('files', file);
+    });
+    
+    // Append other form data
+    formData.append('font_size', fontSize);
     formData.append('columns', columns);
     formData.append('orientation', orientation);
 
@@ -33,12 +58,13 @@ function App() {
       });
 
       if (!response.ok) {
-        throw new Error('Upload failed');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Upload failed');
       }
 
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
-      setDownloadUrl(url);
+      setDownloadUrls([url]);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -54,14 +80,39 @@ function App() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              PDF File
+              PDF Files
             </label>
-            <input
-              type="file"
-              accept=".pdf"
-              onChange={(e) => setFile(e.target.files[0])}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-            />
+            <div className="space-y-2">
+              <input
+                type="file"
+                accept=".pdf"
+                onChange={handleFileChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              />
+              {files.length > 0 && (
+                <div className="mt-2 space-y-2">
+                  <p className="text-sm font-medium text-gray-700">Selected files:</p>
+                  <ul className="space-y-2">
+                    {files.map((file, index) => (
+                      <li key={index} className="flex items-center justify-between bg-gray-50 px-3 py-2 rounded-lg">
+                        <span className="text-sm text-gray-600 truncate max-w-[80%]">
+                          {file.name}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => removeFile(index)}
+                          className="text-red-600 hover:text-red-800"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
           </div>
 
           <div>
@@ -133,19 +184,22 @@ function App() {
           </div>
         )}
 
-        {downloadUrl && (
+        {downloadUrls.length > 0 && (
           <div className="mt-4 p-3 bg-green-50 text-green-700 rounded-lg text-sm">
-            <p className="mb-2">File processed successfully!</p>
-            <a
-              href={downloadUrl}
-              download="processed.pdf"
-              className="inline-flex items-center text-green-700 hover:text-green-800"
-            >
-              <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-              </svg>
-              Download Processed File
-            </a>
+            <p className="mb-2">Files processed successfully!</p>
+            {downloadUrls.map((url, index) => (
+              <a
+                key={index}
+                href={url}
+                download={`processed_${index + 1}.pdf`}
+                className="inline-flex items-center text-green-700 hover:text-green-800 mb-2"
+              >
+                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                Download Processed File {index + 1}
+              </a>
+            ))}
           </div>
         )}
       </div>

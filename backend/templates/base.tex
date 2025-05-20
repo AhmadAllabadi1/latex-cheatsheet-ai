@@ -1,17 +1,43 @@
 \documentclass[10pt,{{ orientation }}]{article}
-\usepackage[margin=1cm]{geometry}
+
+% Tighter margin setup
+\usepackage[
+  top=0.5cm,
+  bottom=0.5cm,
+  left=0.5cm,
+  right=0.5cm
+]{geometry}
+
 \usepackage[utf8]{inputenc}
 \usepackage{multicol}
 \usepackage{titlesec}
 \usepackage{parskip}
 \usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\pagestyle{empty}
+
+% Font size (replace placeholder dynamically)
+{{ font_size }}
+
+% Reduce spacing before/after sections
+\titlespacing*{\section}{0pt}{4pt}{2pt}
+\titlespacing*{\subsection}{0pt}{2pt}{1pt}
+
+% Remove vertical gaps
+\setlength{\parskip}{0pt}
+\setlength{\parindent}{0pt}
+\setlength{\topskip}{0pt}
+\enlargethispage*{\baselineskip}
 
 \begin{document}
 
-{{ font_size }}
+\begin{multicols*}{ {{ columns }} } % Use * version to avoid column breaks and fill page
+\raggedright
 
-\begin{multicols}{ {{ columns }} }
-{{ content }}
-\end{multicols}
+{{content}} 
+
+\end{multicols*}
 
 \end{document}

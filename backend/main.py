@@ -1,16 +1,20 @@
 import os
 from dotenv import load_dotenv
+import tempfile
+from typing import List
+from fastapi import Form, File, UploadFile
 
 
 load_dotenv()
 
 import fitz
 from fastapi.responses import FileResponse, JSONResponse
-from fastapi import FastAPI, UploadFile, File, Form
+from fastapi import FastAPI
 from utils.latex_gen import render_latex
 from utils.compile_latex import compile_latex_to_pdf
 from utils.ai_engine import generate_cheatsheet
 from fastapi.middleware.cors import CORSMiddleware
+
 
 
 app = FastAPI()
@@ -27,28 +31,56 @@ app.add_middleware(
 def home():
     return {"message": "Backend is working!"}
 
-@app.post("/upload")
-async def upload_file(
-    file: UploadFile = File(...),
-    font_size: str = Form("small"),
-    columns: int = Form(2),
-    orientation: str = Form("portrait")
-):
+async def extract_text_from_file(file: UploadFile) -> str:
+    """Extract text from a PDF or TXT file"""
+    content = await file.read()
+    
     if file.filename.endswith(".pdf"):
-        content = await file.read()
         doc = fitz.open(stream=content, filetype="pdf")
         text = ""
         for page in doc:
             text += page.get_text()
+        return text
     elif file.filename.endswith(".txt"):
-        content = await file.read()
-        text = content.decode("utf-8")
+        return content.decode("utf-8")
     else:
-        return JSONResponse(status_code=500, content={"error": "File must be a PDF or TXT file"})
-    
-    ai_generated_text = generate_cheatsheet(text)
-    latex_content = render_latex(ai_generated_text, "\\" + font_size, columns, orientation)
-    latex_pdf = compile_latex_to_pdf(latex_content)
-    #return {"latex_content": latex_content}
-    return FileResponse(path=latex_pdf, media_type="application/pdf", filename="cheatsheet.pdf")
+        raise ValueError("File must be a PDF or TXT file")
+
+@app.post("/upload")
+async def upload_files(
+    files: List[UploadFile] = File(...),
+    font_size: str = Form(...),
+    columns: int = Form(...),
+    orientation: str = Form(...)
+):
+    try:
+        # Extract text from all files
+        all_text = ""
+        for file in files:
+            try:
+                text = await extract_text_from_file(file)
+                all_text += f"\n\n=== Content from {file.filename} ===\n\n"
+                all_text += text
+            except ValueError as e:
+                return JSONResponse(
+                    status_code=400,
+                    content={"error": f"Error processing {file.filename}: {str(e)}"}
+                )
+        
+        # Generate cheatsheet from combined text
+        ai_generated_text = generate_cheatsheet(all_text)
+        latex_content = render_latex(ai_generated_text, "\\" + font_size, columns, orientation)
+        latex_pdf = compile_latex_to_pdf(latex_content)
+        
+        return FileResponse(
+            path=latex_pdf,
+            media_type="application/pdf",
+            filename="cheatsheet.pdf"
+        )
+        
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": f"An error occurred: {str(e)}"}
+        )
 
