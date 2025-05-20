@@ -13,6 +13,8 @@ from fastapi import FastAPI
 from utils.latex_gen import render_latex
 from utils.compile_latex import compile_latex_to_pdf
 from utils.ai_engine import generate_cheatsheet
+from utils.sanitizer import sanitize_text
+from utils.chunker import chunk_text, count_tokens
 from fastapi.middleware.cors import CORSMiddleware
 
 
@@ -40,9 +42,12 @@ async def extract_text_from_file(file: UploadFile) -> str:
         text = ""
         for page in doc:
             text += page.get_text()
-        return text
+        # Sanitize the extracted text
+        return sanitize_text(text)
     elif file.filename.endswith(".txt"):
-        return content.decode("utf-8")
+        text = content.decode("utf-8")
+        # Sanitize the text file content
+        return sanitize_text(text)
     else:
         raise ValueError("File must be a PDF or TXT file")
 
@@ -59,16 +64,33 @@ async def upload_files(
         for file in files:
             try:
                 text = await extract_text_from_file(file)
-                all_text += f"\n\n=== Content from {file.filename} ===\n\n"
-                all_text += text
+                all_text += text + "\n\n"  # Add spacing between files
             except ValueError as e:
                 return JSONResponse(
                     status_code=400,
                     content={"error": f"Error processing {file.filename}: {str(e)}"}
                 )
         
-        # Generate cheatsheet from combined text
-        ai_generated_text = generate_cheatsheet(all_text)
+        # Count total tokens
+        total_tokens = count_tokens(all_text)
+        
+        # If text is too long, chunk it
+        if total_tokens > 4000:  # Adjust this threshold as needed
+            text_chunks = chunk_text(all_text, max_tokens=4000, overlap_tokens=200)
+            
+            # Process each chunk and combine results
+            processed_chunks = []
+            for chunk in text_chunks:
+                processed_text = generate_cheatsheet(chunk)
+                processed_chunks.append(processed_text)
+            
+            # Combine processed chunks
+            ai_generated_text = "\n\n".join(processed_chunks)
+        else:
+            # Process the entire text at once
+            ai_generated_text = generate_cheatsheet(all_text)
+        
+        # Generate LaTeX and compile to PDF
         latex_content = render_latex(ai_generated_text, "\\" + font_size, columns, orientation)
         latex_pdf = compile_latex_to_pdf(latex_content)
         
