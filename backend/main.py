@@ -4,6 +4,8 @@ import tempfile
 from typing import List
 from fastapi import Form, File, UploadFile
 import asyncio
+import shutil
+from pathlib import Path
 
 
 load_dotenv()
@@ -17,7 +19,9 @@ from utils.chunker import chunk_text, count_tokens
 from utils.async_summarizer import summarize_all_chunks
 from fastapi.middleware.cors import CORSMiddleware
 
-
+# Create a directory for storing PDFs
+PDF_STORAGE_DIR = Path("pdf_storage")
+PDF_STORAGE_DIR.mkdir(exist_ok=True)
 
 app = FastAPI()
 
@@ -68,12 +72,21 @@ async def upload_files(
         
         # Generate LaTeX and compile to PDF
         latex_content = render_latex(ai_generated_text, "\\" + font_size, columns, orientation)
-        latex_pdf = compile_latex_to_pdf(latex_content)
+        temp_pdf = compile_latex_to_pdf(latex_content)
         
-        return FileResponse(
-            path=latex_pdf,
-            media_type="application/pdf",
-            filename="cheatsheet.pdf"
+        # Generate a unique filename
+        pdf_filename = f"cheatsheet_{os.urandom(8).hex()}.pdf"
+        pdf_path = PDF_STORAGE_DIR / pdf_filename
+        
+        # Copy the PDF to our storage directory
+        shutil.copy2(temp_pdf, pdf_path)
+        
+        # Return both PDF and LaTeX content
+        return JSONResponse(
+            content={
+                "pdf_url": f"/download/{pdf_filename}",
+                "latex_code": latex_content
+            }
         )
         
     except Exception as e:
@@ -81,4 +94,18 @@ async def upload_files(
             status_code=500,
             content={"error": f"An error occurred: {str(e)}"}
         )
+
+@app.get("/download/{filename}")
+async def download_file(filename: str):
+    file_path = PDF_STORAGE_DIR / filename
+    if not file_path.exists():
+        return JSONResponse(
+            status_code=404,
+            content={"error": "PDF file not found"}
+        )
+    return FileResponse(
+        path=str(file_path),
+        media_type="application/pdf",
+        filename="cheatsheet.pdf"
+    )
 

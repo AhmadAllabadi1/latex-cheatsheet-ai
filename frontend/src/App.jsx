@@ -7,7 +7,8 @@ function App() {
   const [orientation, setOrientation] = useState('portrait');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [downloadUrls, setDownloadUrls] = useState([]);
+  const [result, setResult] = useState(null);
+  const [viewMode, setViewMode] = useState('pdf'); // 'pdf' or 'latex'
 
   const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
@@ -28,6 +29,15 @@ function App() {
     setFiles(prevFiles => prevFiles.filter((_, index) => index !== indexToRemove));
   };
 
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(result.latex_code);
+      alert('LaTeX code copied to clipboard!');
+    } catch (err) {
+      setError('Failed to copy to clipboard');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (files.length === 0) {
@@ -37,7 +47,7 @@ function App() {
 
     setLoading(true);
     setError(null);
-    setDownloadUrls([]);
+    setResult(null);
 
     const formData = new FormData();
     
@@ -62,9 +72,8 @@ function App() {
         throw new Error(errorData.error || 'Upload failed');
       }
 
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      setDownloadUrls([url]);
+      const data = await response.json();
+      setResult(data);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -74,7 +83,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md mx-auto bg-white rounded-xl shadow-sm p-6">
+      <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-sm p-6">
         <h1 className="text-2xl font-semibold text-gray-900 mb-6">PDF Upload</h1>
         
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -184,22 +193,66 @@ function App() {
           </div>
         )}
 
-        {downloadUrls.length > 0 && (
-          <div className="mt-4 p-3 bg-green-50 text-green-700 rounded-lg text-sm">
-            <p className="mb-2">Files processed successfully!</p>
-            {downloadUrls.map((url, index) => (
-              <a
-                key={index}
-                href={url}
-                download={`processed_${index + 1}.pdf`}
-                className="inline-flex items-center text-green-700 hover:text-green-800 mb-2"
-              >
-                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                </svg>
-                Download Processed File {index + 1}
-              </a>
-            ))}
+        {result && (
+          <div className="mt-6">
+            <div className="flex justify-between items-center mb-4">
+              <div className="flex space-x-4">
+                <button
+                  onClick={() => setViewMode('pdf')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium ${
+                    viewMode === 'pdf'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  PDF View
+                </button>
+                <button
+                  onClick={() => setViewMode('latex')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium ${
+                    viewMode === 'latex'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  LaTeX Code
+                </button>
+              </div>
+              {viewMode === 'latex' && (
+                <button
+                  onClick={copyToClipboard}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700"
+                >
+                  Copy to Clipboard
+                </button>
+              )}
+            </div>
+
+            <div className="border rounded-lg overflow-hidden">
+              {viewMode === 'pdf' ? (
+                <object
+                  data={`http://localhost:8000${result.pdf_url}`}
+                  type="application/pdf"
+                  className="w-full h-[600px]"
+                >
+                  <div className="p-4 text-center text-gray-500">
+                    <p>Unable to display PDF directly.</p>
+                    <a
+                      href={`http://localhost:8000${result.pdf_url}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-800 underline"
+                    >
+                      Click here to open PDF in new tab
+                    </a>
+                  </div>
+                </object>
+              ) : (
+                <pre className="p-4 bg-gray-50 overflow-auto max-h-[600px] text-sm">
+                  {result.latex_code}
+                </pre>
+              )}
+            </div>
           </div>
         )}
       </div>

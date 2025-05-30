@@ -14,7 +14,15 @@ semaphore = asyncio.Semaphore(MAX_CONCURRENT_CALLS)
 
 SYSTEM_PROMPT = """You are a helpful assistant that creates concise, well-formatted LaTeX bullet points from text.
 Focus on extracting key information and formatting it as LaTeX bullet points.
-Do not include any LaTeX document structure or preamble - only return the bullet points.
+Format your response as a complete LaTeX itemize environment:
+
+\\begin{itemize}
+\\item First bullet point
+\\item Second bullet point
+\\item Third bullet point
+\\end{itemize}
+
+Do not include any other LaTeX document structure or preamble - only return the itemize environment with bullet points.
 Use \\item for each bullet point and maintain proper LaTeX formatting."""
 
 async def summarize_chunk(client: httpx.AsyncClient, chunk: str) -> str:
