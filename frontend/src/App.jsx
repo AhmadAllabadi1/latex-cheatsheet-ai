@@ -8,7 +8,6 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
-  const [viewMode, setViewMode] = useState('pdf'); // 'pdf' or 'latex'
 
   const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
@@ -195,63 +194,26 @@ function App() {
 
         {result && (
           <div className="mt-6">
-            <div className="flex justify-between items-center mb-4">
-              <div className="flex space-x-4">
-                <button
-                  onClick={() => setViewMode('pdf')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium ${
-                    viewMode === 'pdf'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  PDF View
-                </button>
-                <button
-                  onClick={() => setViewMode('latex')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium ${
-                    viewMode === 'latex'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  LaTeX Code
-                </button>
-              </div>
-              {viewMode === 'latex' && (
-                <button
-                  onClick={copyToClipboard}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700"
-                >
-                  Copy to Clipboard
-                </button>
-              )}
+            <div className="flex justify-end space-x-4 mb-4">
+              <a
+                href={`http://localhost:8000${result.pdf_url}`}
+                download
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700"
+              >
+                Download PDF
+              </a>
+              <button
+                onClick={copyToClipboard}
+                className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700"
+              >
+                Copy to Clipboard
+              </button>
             </div>
 
             <div className="border rounded-lg overflow-hidden">
-              {viewMode === 'pdf' ? (
-                <object
-                  data={`http://localhost:8000${result.pdf_url}`}
-                  type="application/pdf"
-                  className="w-full h-[600px]"
-                >
-                  <div className="p-4 text-center text-gray-500">
-                    <p>Unable to display PDF directly.</p>
-                    <a
-                      href={`http://localhost:8000${result.pdf_url}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-800 underline"
-                    >
-                      Click here to open PDF in new tab
-                    </a>
-                  </div>
-                </object>
-              ) : (
-                <pre className="p-4 bg-gray-50 overflow-auto max-h-[600px] text-sm">
-                  {result.latex_code}
-                </pre>
-              )}
+              <pre className="p-4 bg-gray-50 overflow-auto max-h-[600px] text-sm">
+                {result.latex_code}
+              </pre>
             </div>
           </div>
         )}
